@@ -1,0 +1,119 @@
+.chat-panel {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  padding: 0;
+  margin: 0;
+}
+.standalone .chat-panel { 
+  position: absolute !important;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  /*top: 0;*/
+}
+.chat-panel.chat-panel-minimized {
+  height: 56px;
+}
+.chat-panel > .card > .card-header {
+  height: 56px;
+  padding: 15px 18px 20px 18px;
+  position:relative;
+  /*overflow:hidden;*/
+  color: #222;
+  border-radius: 6px 6px 0px 0px;
+}
+.chat-panel > .card > .card-header:not(.bg-dark) { 
+  background: #f5f8fa !important;   
+}
+.chat-panel > .card > .card-header.bg-dark .badge.bg-dark { 
+  background: rgb(52,182,199) !important;
+}
+.chat-panel > .card-body {
+  margin: 0px 8px;
+}
+#messagesHnd .msg .rounded {
+  border-radius: 10px!important;
+  line-height: 20px;
+}
+#messagesHnd .bg-light.msg {
+  background: #efefef !important;
+  color: #414141;
+}
+#messagesHnd .bg-white.msg {
+  /*background: rgb(24,88,133) !important; */
+  background: rgb(52,182,199) !important; 
+  color: white !important;
+}
+#messagesHnd dd {
+  font-size: 15px;
+}
+#cy {
+  width: 1200px;
+  height: 800px;
+  display: block;
+}
+#messagesHnd {
+  transition: 1s ease-in-out all;
+}
+.carousel-control-next-icon, 
+.carousel-control-prev-icon {
+    color: white;
+    background-color: rgba(0,0,0,0.5);
+    border-radius: 100px;
+}
+input[name=textInput] {
+  height:46px;
+  font-size: 15px;
+}
+.expand-collapse-button {
+  position: relative;
+  top: -1px;
+  right: 4px;
+}
+
+.table-responsive .badge {
+  line-height: 1.75;
+  font-weight: normal;
+  font-size: 14px;
+}
+
+td .badge.bg-primary {
+  background-color: #e4e5e7 !important;
+}
+td .badge.border-primary {
+  border-color: #e4e5e7 !important;
+}
+td .badge.bg-primary.text-white,
+td .badge.text-primary {
+  color: #333 !important;
+}
+td .badge.bg-success {
+  background-color: rgb(52,182,199) !important;
+}
+td .badge.bg-light.text-success {
+  background-color: rgb(52,182,199) !important;
+}
+td .badge.border-success {
+  border-color: rgb(52,182,199) !important;
+}
+td .badge.text-success,
+td .badge.text-danger {
+  color: white !important;
+}
+
+.log-viewer .form-check-inline {
+  display: block;
+}
+
+pre {
+  white-space: pre-wrap;
+}
+
+.react-json-view,
+.pretty-json-container {
+  font-family: -apple-system, Roboto, sans-serif, serif;
+  font-size: 0.9rem;
+}
