@@ -6,11 +6,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     try:
         req_body     = req.get_json()
-        text         = req_body.get('text', 'コーヒーを注文したい') # Japanese 
+        text         = req_body.get('q', None)
         src_lang     = req_body.get('from', None)
         dest_lang    = req_body.get('to', 'en')
     except ValueError:
-        text         = req.params.get('text', 'コーヒーを注文したい') # Japanese 
+        text         = req.params.get('q', None)
         src_lang     = req.params.get('from', None)
         dest_lang    = req.params.get('to', 'en')
 
@@ -19,6 +19,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         return func.HttpResponse(body=json.dumps(response), mimetype="application/json", status_code=200)
     else:
         return func.HttpResponse(
-            "No query param 'text' found.",
+            "No query param 'q' found.",
             status_code=200
         )

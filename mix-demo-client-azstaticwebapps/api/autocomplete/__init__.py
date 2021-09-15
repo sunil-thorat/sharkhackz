@@ -28,6 +28,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         return func.HttpResponse(body=json.dumps(suggestions), mimetype="application/json",status_code=200)
     else:
         return func.HttpResponse(
-             "No query param found.",
+             "No query param 'q' found.",
              status_code=200
         )
