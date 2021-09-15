@@ -84,7 +84,7 @@ class CognitiveSearchApi:
         suggestions = self.search_client.suggest(search_text=search_text, suggester_name=suggester, highlight_post_tag=post_tag, highlight_pre_tag=pre_tag, minimum_coverage=min_coverage, order_by=order_by, top=top)
         full_response = {}
         if suggestions:
-            full_response["suggestions"] = suggestions
+            full_response["suggestions"] = [x["text"] for x in suggestions]
         return full_response
 
     def autocomplete(self, search_text, suggester, mode, post_tag, pre_tag, min_coverage, top):
