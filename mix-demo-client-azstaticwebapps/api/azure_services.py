@@ -9,8 +9,8 @@ from azure.search.documents import SearchClient
 osenv = os.environ
 config = {
     "search_service_name": osenv.get('SearchServiceName', "mix"),
-    "search_api_key": osenv.get('SearchApiKey', "ABF7920FCE83D3B4CA63947C7FDCE13F"),
-    "search_index_name": osenv.get('SearchIndexName', "cosmosdb-index"),
+    "search_api_key": osenv.get('SearchApiKey', "CEA73D8D544B23CA84E15EC26936ED62"),
+    "search_index_name": osenv.get('SearchIndexName', "hotels-sample-index"),
     "cs_region": osenv.get('CognitiveServicesRegion', "CentralUS"),
     "cs_subscription_key": osenv.get('CognitiveServicesSubscriptionKey', "44231fa2339147fab1d62941079f9ab4"),
     "cs_endpoint_url": osenv.get('CognitiveServicesEndpointName', "https://api.cognitive.microsofttranslator.com")
@@ -80,15 +80,15 @@ class CognitiveSearchApi:
         self.index_name = config.get("search_index_name")
         self.search_client = SearchClient(self.endpoint, self.index_name, AzureKeyCredential(self.api_key))
 
-    def suggest(self, search_text, suggester_name):
-        suggestions = self.search_client.suggest(search_text=search_text, suggester_name=suggester_name)
+    def suggest(self, search_text, suggester, post_tag, pre_tag, min_coverage, order_by, top):
+        suggestions = self.search_client.suggest(search_text=search_text, suggester_name=suggester, highlight_post_tag=post_tag, highlight_pre_tag=pre_tag, minimum_coverage=min_coverage, order_by=order_by, top=top)
         full_response = {}
         if suggestions:
             full_response["suggestions"] = suggestions
         return full_response
 
-    def autocomplete(self, search_text, suggester_name, mode, minimum_coverage):
-        suggestions = self.search_client.autocomplete(search_text=search_text, suggester_name=suggester_name, mode=mode, minimum_coverage=minimum_coverage)
+    def autocomplete(self, search_text, suggester, mode, post_tag, pre_tag, min_coverage, top):
+        suggestions = self.search_client.autocomplete(search_text=search_text, suggester_name=suggester, mode=mode, highlight_post_tag=post_tag, highlight_pre_tag=pre_tag, minimum_coverage=min_coverage, top=top)
         full_response = {}
         if suggestions:
             full_response["suggestions"] = suggestions
