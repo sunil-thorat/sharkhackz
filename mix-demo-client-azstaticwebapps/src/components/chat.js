@@ -23,6 +23,8 @@ import moment from 'moment'
 
 import { STUB_SELECTABLE_IMAGES } from "./shared"
 
+import { Suggestions } from './suggest'
+
 const components = ReactSafeHtml.components.makeElements({})
 components.div = ReactSafeHtml.components.createSimpleElement('div', {style: true, class: true})
 components.span = ReactSafeHtml.components.createSimpleElement('span', {style: true, class: true})
@@ -627,6 +629,10 @@ export default class ChatPanel extends React.Component {
                 this.executeTextInput()
               }
             }>
+            <Suggestions 
+              onChangeTextInput={this.onChangeTextInput.bind(this)}
+              triggerAutoScroll={this.triggerAutoScroll.bind(this)}  
+            />
             <div className="input-group">
               <input type="text"
                 className="form-control"
