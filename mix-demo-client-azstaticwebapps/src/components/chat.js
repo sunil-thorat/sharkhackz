@@ -410,7 +410,7 @@ export default class ChatPanel extends React.Component {
     document.getElementById('textInput').focus()
   }
 
-  onChangeTextInput(evt) {
+  onChangeTextInput = async(evt) => {
     // Handle text input
     const tgt = evt.target
     switch(tgt.name){
@@ -418,7 +418,7 @@ export default class ChatPanel extends React.Component {
         this.setState({
           textInput: tgt.value
         })
-        this.updateSuggestions(tgt.value)
+        await this.updateSuggestions(tgt.value)
         break
       default:
         break
