@@ -539,9 +539,14 @@ export default class ChatPanel extends React.Component {
   }
 
   onSuggestionSelection = (selectedSuggestion, selectedSuggestionType) => {
-    console.log("selectedSuggestion: " + JSON.stringify(selectedSuggestion), "selectedSuggestionType: " + selectedSuggestionType)
     let sanitizedText = selectedSuggestion.key.replace(/%3A/g, '').replace(/<strong>/g, '').replace(/<\/strong>/g, '')
-    console.log("sanitizedText: " + sanitizedText)
+    if (selectedSuggestionType == 'autocompletes') {
+      let tempText = this.state.textInput
+      if (tempText.indexOf(' ') > 0) {
+        tempText = tempText.substring(0, tempText.lastIndexOf(' '))
+      }
+      sanitizedText = `${tempText} ${sanitizedText}`
+    }
     this.setState({
       textInput: sanitizedText,
       suggestions: [],
@@ -775,7 +780,7 @@ export default class ChatPanel extends React.Component {
       displaySuggestions = this.state.suggestions
     } else if (this.state.autocompletes && this.state.autocompletes.length > 0) {
       displaySuggestions = this.state.autocompletes
-      displaySuggestionsType = 'autocomplete'
+      displaySuggestionsType = 'autocompletes'
     }
 
     return (<div className={`chat-panel border rounded border-light border-2 ` + (this.state.minimized ? ' chat-panel-minimized ' : '')}>
