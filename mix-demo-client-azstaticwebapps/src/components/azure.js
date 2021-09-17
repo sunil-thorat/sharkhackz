@@ -3,6 +3,7 @@ import {ROOT_URL} from "./shared"
 
 const suggestApiUrl = `${ROOT_URL}/api/suggest`
 const autoCompleteApiUrl = `${ROOT_URL}/api/autocomplete`
+const translateApiUrl = `${ROOT_URL}/api/translate`
 
 const doGet = async(url) => {
     return await axios.get(url)
@@ -41,6 +42,23 @@ export const callAutocompleteAPI = async (textInput) => {
         result = { response: response.data, error: null }
     } catch (error) {
         console.log('Request error', autoCompleteApiUrl, error);
+        result = { response: null, error }
+    }
+    return result
+}
+
+export const callTranslateAPI = async (textInput, toLang, fromLang) => {
+    let result = ''
+    try {
+        // console.log("**textInput**" + textInput + "**")
+        const geturl = `${translateApiUrl}?q=${textInput}&to=${toLang}&from=${fromLang}`
+        c// onsole.log("**geturl**" + geturl + "**")
+        const response = await doGet(geturl)
+        //console.log("**response**" + JSON.stringify(response) + "**")
+        //console.log("**response.data**" + JSON.stringify(response.data) + "**")
+        result = { response: response.data, error: null }
+    } catch (error) {
+        console.log('Request error', translateApiUrl, error);
         result = { response: null, error }
     }
     return result

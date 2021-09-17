@@ -15,6 +15,7 @@ import { BaseClass, AuthForm } from "./shared"
 import { CLIENT_DATA, ROOT_URL } from "./shared"
 import { LogEventsTable, LogEventsViz } from "./log"
 import ChatPanel from "./chat"
+import { callTranslateAPI } from "./azure"
 
 const ReactJson = loadable(() => import('react-json-view'))
 const Button = loadable(() => import('react-bootstrap/Button'))
@@ -202,6 +203,7 @@ export default class DLGaaS extends BaseClass {
       sessionId: '',
       channel: 'default',
       language: 'en-US',
+      userLanguage: '',
       sessionTimeout: 900,
       rawResponses: [],
       rawEvents: [],
@@ -415,6 +417,9 @@ export default class DLGaaS extends BaseClass {
       // 3) data interactions
       // TODO: 4) events
     let payload = {}
+    let translatedPayload = {}
+    let translatedInput = ''
+    let translateRes = ''
     if(typeof(input) === 'string'){
       if(dataAction){
         payload = {
@@ -424,9 +429,30 @@ export default class DLGaaS extends BaseClass {
           }
         }
       } else {
+         if(input){
+           if (this.state.userLanguage !== 'en') {
+              translateRes = await callTranslateAPI(input, 'en', this.state.userLanguage)
+              if(translateRes.error){
+                translatedInput = input
+              } else {
+                translatedInput = translateRes.response.translated_text
+              }
+           }
+           else {
+              translatedInput = input
+           }
+          if(this.state.userLanguage === '' && result !== '' && !result.error){
+            this.setState({userLanguage: translateRes.response.detectedLanguage})
+          }
+        }
+        translatedPayload = {
+          user_input:{
+            user_text: input
+          }
+        }
         payload = {
           user_input: {
-            user_text: input
+            user_text: translatedInput
           }
         }
       }
@@ -439,12 +465,20 @@ export default class DLGaaS extends BaseClass {
     }
     let rawResponses = this.state.rawResponses || []
     rawResponses.unshift({
-      request: payload,
+      request: translatedPayload,
     })
     this.setState({
       rawResponses: rawResponses
     })
     let r = await this.sessionExecute(payload)
+    if (this.state.userLanguage === ''){
+      const toLang = window.navigator.language.split('-')[0]
+      r = await this.translateResponse(r, toLang, 'en')
+    }
+    if(!r.error && this.state.userLanguage !== 'en'){
+      r = await this.translateResponse(r, this.state.userLanguage, 'en')
+    } 
+
     rawResponses.unshift(r)
     this.setState({
       rawResponses: rawResponses,
@@ -459,6 +493,26 @@ export default class DLGaaS extends BaseClass {
     return false
   }
 
+  async translateResponse(r, toLang, fromLang){
+    try{
+      let res = r
+      if(r.response.payload.messages.length > 0){        
+        let message = r.response.payload.messages[0].visual[0].text
+        const result1 = await callTranslateAPI(message, toLang, fromLang)
+        let translatedRes1 = result1.response.translated_text
+        res.response.payload.messages[0].visual[0].text = translatedRes1
+      }
+      if (r.response.payload.qaAction.message){
+        let qaMessage = r.response.payload.qaAction.message.visual[0].text
+        const result2 = await callTranslateAPI(qaMessage, toLang, fromLang)
+        let translatedRes2 = result2.response.translated_text
+        res.response.payload.qaAction.message.visual[0].text = translatedRes2
+      }
+      return res
+    } catch (ex) {
+      console.error('bad response', ex)
+    }
+  }
 
   async processDataAction(daAction){
     let res = await this.clientFetchDaAction(daAction)
