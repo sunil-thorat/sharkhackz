@@ -2,6 +2,7 @@ import logging, json
 import azure.functions as func
 from azure_services import CognitiveServicesApi
 
+# https://docs.microsoft.com/en-us/rest/api/cognitiveservices/translator/translator/translate
 def main(req: func.HttpRequest) -> func.HttpResponse:
 
     try:
@@ -13,6 +14,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         text         = req.params.get('q', None)
         src_lang     = req.params.get('from', None)
         dest_lang    = req.params.get('to', 'en')
+
+    if src_lang == '' or src_lang == 'undefined':
+        src_lang = None
 
     if text:
         response = CognitiveServicesApi().translate(text, src_lang=src_lang, dest_lang=dest_lang)

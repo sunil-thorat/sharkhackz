@@ -31,7 +31,7 @@ class CognitiveServicesApi:
             'X-ClientTraceId': str(uuid.uuid4())
         } 
 
-    def translate(self, text, dest_lang='en', src_lang=None):
+    def translate(self, text, dest_lang, src_lang=None):
         print(text)
         url = self.endpoint_url + '/translate'
         req_body = [
@@ -51,9 +51,12 @@ class CognitiveServicesApi:
 
         full_response = {}
         if response.status_code == 200:
-            full_response["detectedLanguage"] = response.json()[0]["detectedLanguage"]["language"]
-            full_response["translated_text"] = response.json()[0]["translations"][0]["text"]
-
+            if src_lang:
+                full_response["translated_text"] = response.json()[0]["translations"][0]["text"]
+            else:
+                full_response["detectedLanguage"] = response.json()[0]["detectedLanguage"]["language"]
+                full_response["translated_text"] = response.json()[0]["translations"][0]["text"]
+        
         return full_response
 
     def detect(self, text):
@@ -80,18 +83,17 @@ class CognitiveSearchApi:
         self.index_name = config.get("search_index_name")
         self.search_client = SearchClient(self.endpoint, self.index_name, AzureKeyCredential(self.api_key))
 
-    def suggest(self, search_text, suggester, post_tag, pre_tag, min_coverage, order_by, top):
-        suggestions = self.search_client.suggest(search_text=search_text, suggester_name=suggester, highlight_post_tag=post_tag, highlight_pre_tag=pre_tag, minimum_coverage=min_coverage, order_by=order_by, top=top)
+    def suggest(self, search_text, suggester, post_tag, pre_tag, min_coverage, order_by, top, fields):
+        suggestions = self.search_client.suggest(search_text=search_text, suggester_name=suggester, highlight_post_tag=post_tag, highlight_pre_tag=pre_tag, minimum_coverage=min_coverage, order_by=order_by, top=top, search_fields=fields)
         logging.info("**suggestions" + str(suggestions) + "**")
         full_response = {}
         if suggestions:
             full_response["suggestions"] = [x["text"] for x in suggestions]
         return full_response
 
-    def autocomplete(self, search_text, suggester, mode, post_tag, pre_tag, min_coverage, top):
-        suggestions = self.search_client.autocomplete(search_text=search_text, suggester_name=suggester, mode=mode, highlight_post_tag=post_tag, highlight_pre_tag=pre_tag, minimum_coverage=min_coverage, top=top)
+    def autocomplete(self, search_text, suggester, mode, post_tag, pre_tag, min_coverage, top, fields):
+        suggestions = self.search_client.autocomplete(search_text=search_text, suggester_name=suggester, mode=mode, highlight_post_tag=post_tag, highlight_pre_tag=pre_tag, minimum_coverage=min_coverage, top=top, search_fields=fields)
         full_response = {}
         if suggestions:
             full_response["suggestions"] = suggestions
         return full_response
-        
