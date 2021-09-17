@@ -691,7 +691,7 @@ export default class ChatPanel extends React.Component {
                 onChange={this.onChangeTextInput.bind(this)}
                 onFocus={this.triggerAutoScroll.bind(this)} />
 
-                <datalist id="suggestions" style={{backgroundColor: 'white'}}>
+                <datalist id="suggestions">
                   { this.state.suggestions &&
                     this.state.suggestions.map(eachSuggestion =>
                       <option key={eachSuggestion}>{eachSuggestion}</option>)
