@@ -391,7 +391,13 @@ export default class ChatPanel extends React.Component {
       console.log("No suggestions returned from API")
       return
     }
-    const suggestions = this.formatSuggestions(result.response.suggestions)
+    let suggestions = this.formatSuggestions(result.response.suggestions)
+    suggestions = suggestions.map(eachSuggestion => {
+      return {
+        key: eachSuggestion,
+        value: eachSuggestion
+      }
+    })
     // update state, with new suggestions
     this.setState({
       suggestions: suggestions
@@ -428,7 +434,17 @@ export default class ChatPanel extends React.Component {
       console.log("No autocompletes returned from API")
       return
     }
-    const autocompletes = result.response.suggestions.map(eachSuggestion => eachSuggestion.text)
+    let tempText = this.state.textInput
+    if (tempText.indexOf(' ') > 0) {
+      tempText = tempText.substring(0, tempText.lastIndexOf(' '))
+    }
+    const autocompletes = result.response.suggestions.map(eachAutocomplete => {
+      return {
+        key: eachAutocomplete.text,
+        value: `${tempText} ${eachAutocomplete.text}`
+      }
+    })
+    autocompletes.splice(0, 0, {key: this.state.textInput, value: this.state.textInput})
     // update state, with new autocompletes
     this.setState({
       autocompletes: autocompletes
@@ -740,7 +756,13 @@ export default class ChatPanel extends React.Component {
                 <datalist id="suggestions">
                   { displaySuggestions &&
                     displaySuggestions.map(eachDisplaySuggestion =>
-                      <option key={eachDisplaySuggestion}>{eachDisplaySuggestion}</option>)
+                      <option
+                        key={eachDisplaySuggestion.key}
+                        value={eachDisplaySuggestion.key}
+                      >
+                        {eachDisplaySuggestion.value}
+                      </option>
+                    )
                   }
                 </datalist>
             </div>
