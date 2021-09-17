@@ -9,10 +9,10 @@ from azure.search.documents import SearchClient
 osenv = os.environ
 config = {
     "search_service_name": osenv.get('SearchServiceName', "mix"),
-    "search_api_key": osenv.get('SearchApiKey', ""),
+    "search_api_key": osenv.get('SearchApiKey', "CEA73D8D544B23CA84E15EC26936ED62"),
     "search_index_name": osenv.get('SearchIndexName', "hotels-sample-index"),
     "cs_region": osenv.get('CognitiveServicesRegion', "CentralUS"),
-    "cs_subscription_key": osenv.get('CognitiveServicesSubscriptionKey', ""),
+    "cs_subscription_key": osenv.get('CognitiveServicesSubscriptionKey', "44231fa2339147fab1d62941079f9ab4"),
     "cs_endpoint_url": osenv.get('CognitiveServicesEndpointName', "https://api.cognitive.microsofttranslator.com")
 }
 
@@ -82,6 +82,7 @@ class CognitiveSearchApi:
 
     def suggest(self, search_text, suggester, post_tag, pre_tag, min_coverage, order_by, top):
         suggestions = self.search_client.suggest(search_text=search_text, suggester_name=suggester, highlight_post_tag=post_tag, highlight_pre_tag=pre_tag, minimum_coverage=min_coverage, order_by=order_by, top=top)
+        logging.info("**suggestions" + str(suggestions) + "**")
         full_response = {}
         if suggestions:
             full_response["suggestions"] = [x["text"] for x in suggestions]
