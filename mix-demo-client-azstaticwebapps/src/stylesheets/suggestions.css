@@ -1,0 +1,15 @@
+.suggestions-dropdown {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.suggestions-dropdown-content {
+    position: float;
+    left: auto;
+    background-color: #f9f9f9;
+    width: 100%;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 10px 12px;
+    z-index: 1;
+}
