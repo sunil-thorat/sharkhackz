@@ -52,7 +52,7 @@ export const callTranslateAPI = async (textInput, toLang, fromLang) => {
     try {
         // console.log("**textInput**" + textInput + "**")
         const geturl = `${translateApiUrl}?q=${textInput}&to=${toLang}&from=${fromLang}`
-        c// onsole.log("**geturl**" + geturl + "**")
+        // console.log("**geturl**" + geturl + "**")
         const response = await doGet(geturl)
         //console.log("**response**" + JSON.stringify(response) + "**")
         //console.log("**response.data**" + JSON.stringify(response.data) + "**")

@@ -441,7 +441,7 @@ export default class DLGaaS extends BaseClass {
            else {
               translatedInput = input
            }
-          if(this.state.userLanguage === '' && result !== '' && !result.error){
+          if(this.state.userLanguage === '' && translateRes !== '' && !translateRes.error){
             this.setState({userLanguage: translateRes.response.detectedLanguage})
           }
         }
