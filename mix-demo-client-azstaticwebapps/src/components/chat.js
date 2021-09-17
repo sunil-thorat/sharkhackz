@@ -373,23 +373,23 @@ export default class ChatPanel extends React.Component {
     return filteredSuggestions
   }
 
-  updateSuggestions(textInput) {
-    console.log("**textInput**" + textInput + "**")
+  updateSuggestions = async(textInput) => {
+    //console.log("**textInput**" + textInput + "**")
     if (!textInput || textInput.length < 3) {
       return
     }
-    const result = callSuggestAPI(textInput)
-    console.log("**result**" + result + "**")
+    const result = await callSuggestAPI(textInput)
+    //console.log("**result**" + JSON.stringify(result) + "**")
     if (!result || result.error) {
       console.log("failed to get suggestions from API")
       return
     }
-    if (!result.response || result.response.length == 0) {
+    if (!result.response || !result.response.suggestions || result.response.suggestions.length == 0) {
       console.log("No suggestions returned from API")
       return
     }
-    const suggestions = this.formatSuggestions(result.response)
-    console.log("**suggestions**" + suggestions + "**")
+    const suggestions = this.formatSuggestions(result.response.suggestions)
+    //console.log("**suggestions**" + suggestions + "**")
     // update state
     this.setState({
       suggestions: suggestions
@@ -404,7 +404,6 @@ export default class ChatPanel extends React.Component {
     if(elem && this.props.autoScrollChatPanel){
       elem.scrollTop = elem.scrollHeight
     }
-    //this.updateSuggestions('')
   }
 
   focusInput(){
@@ -693,7 +692,10 @@ export default class ChatPanel extends React.Component {
                 onFocus={this.triggerAutoScroll.bind(this)} />
 
                 <datalist id="suggestions" style={{backgroundColor: 'white'}}>
-                  { this.state.suggestions && this.state.suggestions.map(eachSuggestion => <option>{eachSuggestion}</option>)}
+                  { this.state.suggestions &&
+                    this.state.suggestions.map(eachSuggestion =>
+                      <option key={eachSuggestion}>{eachSuggestion}</option>)
+                  }
                 </datalist>
             </div>
           </form>

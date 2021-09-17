@@ -11,15 +11,16 @@ const doPost = async(url, data) => {
     return await axios.post(url, data)
 }
 
-export function callSuggestAPI(textInput) {
+export const callSuggestAPI = async (textInput) => {
     let result = ''
     try {
-        console.log("**textInput**" + textInput + "**")
+        //console.log("**textInput**" + textInput + "**")
         const geturl = `${suggestApiUrl}?q=${textInput}`
-        console.log("**geturl**" + geturl + "**")
-        const suggestions = doGet(geturl)
-        console.log("**suggestions**" + suggestions + "**")
-        result = { response: suggestions, error: null }
+        //console.log("**geturl**" + geturl + "**")
+        const response = await doGet(geturl)
+        //console.log("**response**" + JSON.stringify(response) + "**")
+        //console.log("**response.data**" + JSON.stringify(response.data) + "**")
+        result = { response: response.data, error: null }
     } catch (error) {
         console.log('Request error', suggestApiUrl, error);
         result = { response: null, error }
