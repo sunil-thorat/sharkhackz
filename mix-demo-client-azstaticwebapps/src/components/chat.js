@@ -23,6 +23,8 @@ import moment from 'moment'
 
 import { STUB_SELECTABLE_IMAGES } from "./shared"
 
+import { callSuggestAPI } from "./azure"
+
 const components = ReactSafeHtml.components.makeElements({})
 components.div = ReactSafeHtml.components.createSimpleElement('div', {style: true, class: true})
 components.span = ReactSafeHtml.components.createSimpleElement('span', {style: true, class: true})
@@ -303,6 +305,7 @@ export default class ChatPanel extends React.Component {
       textInput: '',
       timeoutRemaining: 0,
       minimized: false,
+      suggestions: [],
     }
     this.sessionTimeoutInterval = -1
     this.countdownTimer = null
@@ -350,6 +353,52 @@ export default class ChatPanel extends React.Component {
     })
   }
 
+  formatSuggestions(suggestions) {
+    if (!suggestions) {
+      return []
+    }
+    const filteredSuggestions = suggestions.map(suggestion => {
+      var boldChars = (suggestion.match(/%3A/g)).length
+      if (boldChars > 0 && boldChars % 2 === 0) {
+          for (var index = 0; index < (boldChars / 2); index ++) {
+            suggestion = suggestion.replace("%3A", "<strong>")
+            suggestion = suggestion.replace("%3A", "</strong>")
+          }
+      } else {
+        suggestion = suggestion.replace(/%3A/g, "")
+      }
+      return suggestion
+    });
+    //console.log("**filteredSuggestions**" + filteredSuggestions + "**")
+    return filteredSuggestions
+  }
+
+  updateSuggestions = async(textInput) => {
+    //console.log("**textInput**" + textInput + "**")
+    if (!textInput || textInput.length < 3) {
+      return
+    }
+    const result = await callSuggestAPI(textInput)
+    //console.log("**result**" + JSON.stringify(result) + "**")
+    if (!result || result.error) {
+      console.log("failed to get suggestions from API")
+      return
+    }
+    if (!result.response || !result.response.suggestions || result.response.suggestions.length == 0) {
+      console.log("No suggestions returned from API")
+      return
+    }
+    const suggestions = this.formatSuggestions(result.response.suggestions)
+    //console.log("**suggestions**" + suggestions + "**")
+    // update state
+    this.setState({
+      suggestions: suggestions
+    })
+    /*this.setState({
+      suggestions: ["stats", "vaccines", "active cases"]
+    })*/
+  }
+
   triggerAutoScroll(){
     let elem = document.getElementById('messagesHnd')
     if(elem && this.props.autoScrollChatPanel){
@@ -361,7 +410,7 @@ export default class ChatPanel extends React.Component {
     document.getElementById('textInput').focus()
   }
 
-  onChangeTextInput(evt) {
+  onChangeTextInput = async(evt) => {
     // Handle text input
     const tgt = evt.target
     switch(tgt.name){
@@ -369,6 +418,7 @@ export default class ChatPanel extends React.Component {
         this.setState({
           textInput: tgt.value
         })
+        await this.updateSuggestions(tgt.value)
         break
       default:
         break
@@ -632,6 +682,7 @@ export default class ChatPanel extends React.Component {
                 className="form-control"
                 autoComplete="off"
                 name="textInput"
+                list="suggestions"
                 style={{'height': '50px'}}
                 value={this.state.textInput}
                 disabled={this.state.timeoutRemaining < 1 || !this.props.active}
@@ -639,6 +690,13 @@ export default class ChatPanel extends React.Component {
                 placeholder="Type or ask me something"
                 onChange={this.onChangeTextInput.bind(this)}
                 onFocus={this.triggerAutoScroll.bind(this)} />
+
+                <datalist id="suggestions">
+                  { this.state.suggestions &&
+                    this.state.suggestions.map(eachSuggestion =>
+                      <option key={eachSuggestion}>{eachSuggestion}</option>)
+                  }
+                </datalist>
             </div>
           </form>
         </div>
