@@ -444,7 +444,7 @@ export default class ChatPanel extends React.Component {
         value: `${tempText} ${eachAutocomplete.text}`
       }
     })
-    autocompletes.splice(0, 0, {key: this.state.textInput, value: this.state.textInput})
+    autocompletes.splice(autocompletes.length - 1, 0, {key: this.state.textInput, value: this.state.textInput})
     // update state, with new autocompletes
     this.setState({
       autocompletes: autocompletes
@@ -754,14 +754,17 @@ export default class ChatPanel extends React.Component {
                 onFocus={this.triggerAutoScroll.bind(this)} />
 
                 <datalist id="suggestions">
-                  { displaySuggestions &&
-                    displaySuggestions.map(eachDisplaySuggestion =>
-                      <option
-                        key={eachDisplaySuggestion.key}
-                        value={eachDisplaySuggestion.key}
-                      >
-                        {eachDisplaySuggestion.value}
-                      </option>
+                  {
+                    displaySuggestions &&
+                    displaySuggestions.map
+                    (
+                      eachDisplaySuggestion =>
+                        <option
+                          key={eachDisplaySuggestion.key}
+                          value={eachDisplaySuggestion.value}
+                        >
+                          {/*eachDisplaySuggestion.value*/}
+                        </option>
                     )
                   }
                 </datalist>
