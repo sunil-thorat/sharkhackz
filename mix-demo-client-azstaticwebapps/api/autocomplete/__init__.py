@@ -28,6 +28,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     if search_text:
         suggestions = CognitiveSearchApi().autocomplete(search_text=search_text, suggester=suggester, mode=mode, post_tag=post_tag, pre_tag=pre_tag, min_coverage=min_coverage, top=top, fields=fields)
+        """
+        if (len(suggestions) == 0 and ' ' in search_text):
+            search_text = search_text.split(' ').pop()
+            suggestions = CognitiveSearchApi().autocomplete(search_text=search_text, suggester=suggester, mode=mode, post_tag=post_tag, pre_tag=pre_tag, min_coverage=min_coverage, top=top, fields=fields)
+        """
         return func.HttpResponse(body=json.dumps(suggestions), mimetype="application/json",status_code=200)
     else:
         return func.HttpResponse(
