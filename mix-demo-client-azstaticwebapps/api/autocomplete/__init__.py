@@ -13,7 +13,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         post_tag     = req_body.get('post_tag', '%3A')
         pre_tag      = req_body.get('pre_tag', '%3A')
         min_coverage = req_body.get('min_coverage', 50)
-        top          = req_body.get('top', 1)
+        top          = req_body.get('top', 3)
         fields       = req_body.get('search_fields', None) # list
     except ValueError:
         search_text  = req.params.get('q', None)
@@ -22,7 +22,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         post_tag     = req.params.get('post_tag', '%3A')
         pre_tag      = req.params.get('pre_tag', '%3A')
         min_coverage = req.params.get('min_coverage', 50)
-        top          = req.params.get('top', 1)
+        top          = req.params.get('top', 3)
         fields       = req.params.get('search_fields', None) # list
 
 

@@ -405,16 +405,15 @@ export default class ChatPanel extends React.Component {
       return []
     }
     const filteredSuggestions = suggestions.map(suggestion => {
+      var boldChars = (suggestion.match(/%3A/g)).length
+      if (boldChars > 0 && boldChars % 2 === 0) {
+          for (var index = 0; index < (boldChars / 2); index ++) {
+            suggestion = suggestion.replace("%3A", "<strong>")
+            suggestion = suggestion.replace("%3A", "</strong>")
+          }
+      } else {
         suggestion = suggestion.replace(/%3A/g, "")
-    //   var boldChars = (suggestion.match(/%3A/g)).length
-    //   if (boldChars > 0 && boldChars % 2 === 0) {
-    //       for (var index = 0; index < (boldChars / 2); index ++) {
-    //         suggestion = suggestion.replace("%3A", "<strong>")
-    //         suggestion = suggestion.replace("%3A", "</strong>")
-    //       }
-    //   } else {
-    //     suggestion = suggestion.replace(/%3A/g, "")
-    //   }
+      }
       return suggestion
     });
     //console.log("**filteredSuggestions**" + filteredSuggestions + "**")
