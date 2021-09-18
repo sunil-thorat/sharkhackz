@@ -9,7 +9,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         req_body     = req.get_json()
         search_text  = req_body.get('q', None)
         suggester    = req_body.get('suggester', 'sg')
-        mode         = req_body.get('mode', 'twoTerms') # oneTerm, twoTerms, oneTermWithContext
+        mode         = req_body.get('mode', 'oneTermWithContext') # oneTerm, twoTerms, oneTermWithContext
         post_tag     = req_body.get('post_tag', '%3A')
         pre_tag      = req_body.get('pre_tag', '%3A')
         min_coverage = req_body.get('min_coverage', 50)
@@ -18,7 +18,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     except ValueError:
         search_text  = req.params.get('q', None)
         suggester    = req.params.get('suggester', 'sg')
-        mode         = req.params.get('mode', 'twoTerms') # oneTerm, twoTerms, oneTermWithContext
+        mode         = req.params.get('mode', 'oneTermWithContext') # oneTerm, twoTerms, oneTermWithContext
         post_tag     = req.params.get('post_tag', '%3A')
         pre_tag      = req.params.get('pre_tag', '%3A')
         min_coverage = req.params.get('min_coverage', 50)
