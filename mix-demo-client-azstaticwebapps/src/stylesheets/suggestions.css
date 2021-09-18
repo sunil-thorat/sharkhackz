@@ -1,6 +1,7 @@
 .suggestions-dropdown {
     position: relative;
     display: inline-block;
+    font-size: small;
     width: 100%;
 }
 

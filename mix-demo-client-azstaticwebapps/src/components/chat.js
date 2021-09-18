@@ -335,7 +335,7 @@ const SuggestionWindow = ({ suggestions, suggestionsType, onSelection}) => {
           suggestions.map
           (
             eachDisplaySuggestion =>
-              <Suggestion key={eachDisplaySuggestion} suggestion={eachDisplaySuggestion} onSelection={selectSuggestion}/>
+              <Suggestion key={eachDisplaySuggestion.key} suggestion={eachDisplaySuggestion} onSelection={selectSuggestion}/>
           )
         }
       </div>
@@ -421,6 +421,10 @@ export default class ChatPanel extends React.Component {
   }
 
   updateSuggestions = async(textInput, forceSearch) => {
+    // update state, to clear previous suggestions
+    this.setState({
+      suggestions: []
+    })
     if (!forceSearch) {
       if (!textInput || textInput.length < 3) {
         return
@@ -430,17 +434,19 @@ export default class ChatPanel extends React.Component {
         textInput = 'a'
       }
     }
-    // update state, to clear previous suggestions
-    this.setState({
-      suggestions: []
-    })
     const result = await callSuggestAPI(textInput)
     if (!result || result.error) {
       console.log("failed to get suggestions from API")
+      this.setState({
+        suggestions: []
+      })
       return
     }
     if (!result.response || !result.response.suggestions || result.response.suggestions.length == 0) {
       console.log("No suggestions returned from API")
+      this.setState({
+        suggestions: []
+      })
       return
     }
     let suggestions = this.formatSuggestions(result.response.suggestions)
@@ -460,6 +466,10 @@ export default class ChatPanel extends React.Component {
   }
 
   updateAutocompletes = async(textInput) => {
+    // update state, to clear previous autocompletes
+    this.setState({
+      autocompletes: []
+    })
     if (!textInput) {
       return
     }
@@ -476,25 +486,34 @@ export default class ChatPanel extends React.Component {
     if (!query) {
       return
     }
-    // update state, to clear previous autocompletes
-    this.setState({
-      autocompletes: []
-    })
     const result = await callAutocompleteAPI(query)
     if (!result || result.error) {
       console.log("failed to get autocompletes from API")
+      this.setState({
+        autocompletes: []
+      })
       return
     }
     if (!result.response || !result.response.suggestions || result.response.suggestions.length == 0) {
       console.log("No autocompletes returned from API")
+      this.setState({
+        autocompletes: []
+      })
       return
     }
-    /*let tempText = this.state.textInput
-    if (tempText.indexOf(' ') > 0) {
-      tempText = tempText.substring(0, tempText.lastIndexOf(' '))
-    }*/
     let autocompletes = result.response.suggestions.map(eachAutocomplete => {
-      let displayValue = `'     <strong>${eachAutocomplete.text}</strong>`
+      let highlightIndex = -1
+      let tempText = this.state.textInput
+      if (tempText.indexOf(' ') > 0) {
+        tempText = tempText.split(' ').pop()
+        if (tempText.length < eachAutocomplete.text.length) {
+          highlightIndex = tempText.length
+        }
+      }
+      let displayValue = `<strong>${eachAutocomplete.text}</strong>`
+      if (highlightIndex > 0) {
+        displayValue = `${eachAutocomplete.text.substring(0, highlightIndex)}<strong>${eachAutocomplete.text.substring(highlightIndex)}</strong>`
+      }
       return {
         key: eachAutocomplete.text,
         value: displayValue
@@ -528,10 +547,16 @@ export default class ChatPanel extends React.Component {
         this.setState({
           textInput: tgt.value
         })
-        if (tgt.value && tgt.value.length > 2) {
-          await this.updateSuggestions(tgt.value, false)
-          await this.updateAutocompletes(tgt.value)
-        }
+        setTimeout(() => {
+          console.log("waiting 100ms before hitting suggest APIs...")
+        }, 100)
+        //if (tgt.value && tgt.value.length > 2) {
+        await this.updateSuggestions(tgt.value, false)
+        setTimeout(() => {
+          console.log("waiting 100ms more before hitting autocompelete APIs...")
+        }, 100)
+        await this.updateAutocompletes(tgt.value)
+        //}
         break
       default:
         break
@@ -555,7 +580,8 @@ export default class ChatPanel extends React.Component {
   }
 
   onClickTextInput = async(evt) => {
-    if (this.state.textInput === '' && evt.keyCode === 229) {
+    console.log("in textInput onClick**" + this.state.textInput + "**" + evt + "**")
+    if (this.state.textInput == '' && evt.keyCode == 229) {
       await this.updateSuggestions('book', true)
     }
   }
