@@ -314,9 +314,9 @@ const Suggestion = ({ suggestion, onSelection }) => {
   )
 }
 
-const SuggestionWindow = ({ suggestions, suggestionsType, onSelection}) => {
+const SuggestionWindow = ({ suggestions, suggestionsType, alignSuggestionsToCenter, onSelection}) => {
   const suggestionsDivStyle = { display: 'none', textAlign: 'left'}
-  if (suggestionsType == 'autocompletes') {
+  if (alignSuggestionsToCenter && suggestionsType == 'autocompletes') {
     suggestionsDivStyle.textAlign = 'center'
   }
   if (suggestions && suggestions.length > 0) {
@@ -819,11 +819,16 @@ export default class ChatPanel extends React.Component {
   render() {
     let displaySuggestions = []
     let displaySuggestionsType = 'suggestions'
+    let alignSuggestionsToCenter = false
     if (this.state.suggestions && this.state.suggestions.length > 0) {
       displaySuggestions = this.state.suggestions
     } else if (this.state.autocompletes && this.state.autocompletes.length > 0) {
       displaySuggestions = this.state.autocompletes
       displaySuggestionsType = 'autocompletes'
+    }
+
+    if (!this.props.rawResponses || this.props.rawResponses.length <= 3) {
+      alignSuggestionsToCenter = true
     }
 
     return (<div className={`chat-panel border rounded border-light border-2 ` + (this.state.minimized ? ' chat-panel-minimized ' : '')}>
@@ -898,7 +903,7 @@ export default class ChatPanel extends React.Component {
                 </datalist>
                 */}
                 <br/>
-                <SuggestionWindow suggestions={displaySuggestions} suggestionsType={displaySuggestionsType} onSelection={this.onSuggestionSelection}/>
+                <SuggestionWindow suggestions={displaySuggestions} suggestionsType={displaySuggestionsType} alignSuggestionsToCenter={alignSuggestionsToCenter} onSelection={this.onSuggestionSelection}/>
             </div>
           </form>
         </div>
