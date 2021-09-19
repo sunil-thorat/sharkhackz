@@ -597,7 +597,7 @@ export default class ChatPanel extends React.Component {
 
   onClickTextInput = async(evt) => {
     if ((!this.state.textInput || this.state.textInput == '') && evt.keyCode == 40) {
-      await this.updateSuggestions('book', true)
+      await this.updateSuggestions('flight', true)
     }
   }
 
