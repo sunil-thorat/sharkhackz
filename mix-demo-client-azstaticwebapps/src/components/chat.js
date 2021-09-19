@@ -596,9 +596,8 @@ export default class ChatPanel extends React.Component {
   }
 
   onClickTextInput = async(evt) => {
-    //console.log("in textInput onClick**" + this.state.textInput + "**" + evt + "**")
-    if (this.state.textInput == '' && evt.keyCode == 229) {
-      //await this.updateSuggestions('book', true)
+    if ((!this.state.textInput || this.state.textInput == '') && evt.keyCode == 40) {
+      await this.updateSuggestions('book', true)
     }
   }
 
@@ -876,7 +875,7 @@ export default class ChatPanel extends React.Component {
                 placeholder="Type or ask me something"
                 onChange={this.onChangeTextInput.bind(this)}
                 onFocus={this.triggerAutoScroll.bind(this)}
-                onClick={this.onClickTextInput.bind(this)}
+                onKeyDown={this.onClickTextInput.bind(this)}
               />
 
                 {/*
