@@ -790,6 +790,8 @@ export default class ChatPanel extends React.Component {
     this.setState({
       textInput: '',
       timeoutRemaining: this.props.sessionTimeout,
+      suggestions: [],
+      autocompletes: []
     })
   }
 
